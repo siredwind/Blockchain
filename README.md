@@ -29,3 +29,15 @@ greeter.runner.address
 await greeter.get()
 ### write with contract
 await greeter.set("Hello World! I modified my first Smart Contract!")
+
+## Week 2. Create blockchain-developer-bootcamp backend
+### get accounts from contract
+const accounts = await ethers.getSigners()
+### get first account
+accounts[0]
+### get account balance
+const balance = await ethers.provider.getBalance(accounts[0].address)
+### display balance
+balance.toString()
+### convert balance from wei to ether
+ethers.utils.formatEther(balance.toString())
