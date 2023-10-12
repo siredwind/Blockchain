@@ -4,15 +4,19 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract Token {
-    string public name = "Meme Ether";
-    string public symbol = "MTH";
+    string public name = name;
+    string public symbol = symbol;
     uint256 public decimals = 18;
-    uint256 public totalSupply = (10 ** 6) * (10 ** decimals);
+    uint256 public totalSupply;
 
-    constructor(string memory _name, string memory _symbol, uint256 _decimals, uint256 _totalSupply) {
+    // Track Balances
+    mapping(address => uint256) public balanceOf;
+
+    constructor(string memory _name, string memory _symbol, uint256 _totalSupply) {
         name = _name;
         symbol = _symbol;
-        decimals = _decimals;
-        totalSupply = _totalSupply;
+        totalSupply = _totalSupply * (10 ** decimals);
+        balanceOf[msg.sender] = totalSupply;
     }
+
 }
