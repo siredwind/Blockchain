@@ -41,3 +41,19 @@ const balance = await ethers.provider.getBalance(accounts[0].address)
 balance.toString()
 ### convert balance from wei to ether
 ethers.utils.formatEther(balance.toString())
+
+## Week 2. Verify Contract
+### flatten contract
+npx hardhat flatten > TokenFlatten.sol
+### verify contract 
+npx hardhat --verify --network sepolia 0xe437260B3785171cB5BAd86c3B78d961da1b8223 "Meme Ether" "MTH" "1000000" 
+### manual verify contract
+https://sepolia.etherscan.io/verifyContract-solc?a=0xe437260B3785171cB5BAd86c3B78d961da1b8223&c=v0.8.9%2bcommit.e5eed63a&lictype=2
+add flatten contract code
+choose sepolia network
+choose solidity version from hardhat.config.js
+choose license from contract header
+
+## Week 2. Send tokens
+Open Metamask -> Import tokens -> paste contract creation address 0x7feff842D55Aa98560791b00ff3Da8dA121Eb897
+Send tokens using the address of the account

@@ -5,7 +5,7 @@ async function main() {
     const Token = await ethers.getContractFactory("Token");
 
     // Deploy contract
-    const token = await Token.deploy();
+    const token = await Token.deploy('Meme Ether', 'MTH', '1000000');
     await token.deployed();
     console.log(`Token deployed to: ${token.address}`)
 }
