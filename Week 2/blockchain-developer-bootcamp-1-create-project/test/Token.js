@@ -1,7 +1,7 @@
 const { ethers } = require('hardhat');
 const { expect } = require('chai');
 
-const tokens = (number) => ethers.utils.parseUnits(number.toString(), 'ether')
+const tokens = (number) => ethers.parseUnits(number.toString(), 'ether')
 
 describe('Token', () => {
     let token, accounts, deployer, receiver, exchange;
