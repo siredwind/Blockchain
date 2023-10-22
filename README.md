@@ -57,3 +57,6 @@ choose license from contract header
 ## Week 2. Send tokens
 Open Metamask -> Import tokens -> paste contract creation address 0x7feff842D55Aa98560791b00ff3Da8dA121Eb897
 Send tokens using the address of the account
+
+## Week 3. Create react app manually
+Required files: src/index.js, src/index.css, src/App.js, public/index.html, src/reportWebVitals.js
