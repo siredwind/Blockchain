@@ -22,7 +22,7 @@ async function main() {
 
   // Deploy Crowdsale
   const Crowdsale = await hre.ethers.getContractFactory('Crowdsale');
-  let crowdsale = await Crowdsale.deploy(token.address, PRICE, MAX_SUPPLY, OPEN_TIME);
+  let crowdsale = await Crowdsale.deploy(token.address, PRICE, hre.ethers.utils.parseUnits(MAX_SUPPLY, 'ether'), OPEN_TIME);
 
   await crowdsale.deployed();
   console.log(`Crowdsale deployed to: ${crowdsale.address}\n`);
