@@ -44,7 +44,7 @@ function App() {
 
     // Fetch account
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = ethers.utils.getAddress(accounts[0]);
+    const account = ethers.utils.getAddress(accounts[1]);
     setAccount(account);
 
     // Fetch account balance
@@ -76,7 +76,7 @@ function App() {
     <Container>
       <Navigation />
 
-      <h1 className='my-4 text-center'>Introducing DApp Token!</h1>
+      <h1 className='my-4 text-center'>Introducing MTH Token!</h1>
 
       {isLoading ? (
         <Loading />

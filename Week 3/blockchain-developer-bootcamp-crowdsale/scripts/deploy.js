@@ -11,6 +11,7 @@ async function main() {
   const SYMBOL = 'MTH';
   const MAX_SUPPLY = '1000000';
   const PRICE = hre.ethers.utils.parseUnits('0.025', 'ether');
+  const OPEN_TIME = Math.floor(Date.now() / 1000) - 60;
 
   // Deploy Token
   const Token = await hre.ethers.getContractFactory('Token');
@@ -21,7 +22,7 @@ async function main() {
 
   // Deploy Crowdsale
   const Crowdsale = await hre.ethers.getContractFactory('Crowdsale');
-  let crowdsale = await Crowdsale.deploy(token.address, PRICE, MAX_SUPPLY);
+  let crowdsale = await Crowdsale.deploy(token.address, PRICE, MAX_SUPPLY, OPEN_TIME);
 
   await crowdsale.deployed();
   console.log(`Crowdsale deployed to: ${crowdsale.address}\n`);
