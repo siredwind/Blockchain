@@ -46,6 +46,7 @@ contract DAO {
         uint256 _amount,
         address payable _recipient
     ) external onlyInvestor {
+        require(bytes(_name).length > 0, "Proposal must have a description");
         require(address(this).balance >= _amount);
 
         proposalCount++;
@@ -72,7 +73,30 @@ contract DAO {
         require(!votes[msg.sender][_id], "already voted");
 
         // Update votes
-        proposal.votes += token.balanceOf(msg.sender); 
+        proposal.votes += token.balanceOf(msg.sender);
+
+        // Track that user has voted
+        votes[msg.sender][_id] = true;
+
+        // Emit an event
+        emit Vote(_id, msg.sender);
+    }
+
+    function downvote(uint256 _id) external onlyInvestor {
+        // Fetch proposal from mapping by id
+        Proposal storage proposal = proposals[_id];
+
+        // Ensure the proposal has enough votes to deduct from
+        require(
+            proposal.votes >= token.balanceOf(msg.sender),
+            "not enough votes to downvote"
+        );
+
+        // Don't let investors vote twice
+        require(!votes[msg.sender][_id], "already voted");
+
+        // Update votes
+        proposal.votes -= token.balanceOf(msg.sender);
 
         // Track that user has voted
         votes[msg.sender][_id] = true;
@@ -83,7 +107,6 @@ contract DAO {
 
     // Finalize proposal & transfer funds
     function finalizeProposal(uint256 _id) external onlyInvestor {
-        
         // Fetch the proposal
         Proposal storage proposal = proposals[_id];
 
@@ -94,13 +117,16 @@ contract DAO {
         proposal.finalized = true;
 
         // Check that proposal has enough votes
-        require(proposal.votes >= quorum, "must reach quorum to finalize proposal");
+        require(
+            proposal.votes >= quorum,
+            "must reach quorum to finalize proposal"
+        );
 
         // Check that the contract has enough Ether
         require(address(this).balance >= proposal.amount);
 
         // Transfer funds
-        (bool sent, ) = proposal.recipient.call{ value: proposal.amount }("");
+        (bool sent, ) = proposal.recipient.call{value: proposal.amount}("");
         require(sent);
 
         // Emit events
