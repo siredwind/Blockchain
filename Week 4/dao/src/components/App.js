@@ -17,9 +17,11 @@ import config from '../config.json';
 function App() {
   const [provider, setProvider] = useState(null)
   const [account, setAccount] = useState(null)
+  const [balance, setBalance] = useState(0)
   const [dao, setDao] = useState(null)
   const [treasuryBalance, setTreasuryBalance] = useState(0)
   const [proposals, setProposals] = useState([])
+  const [votes, setVotes] = useState([])
   const [quorum, setQuorum] = useState(null)
 
   const [isLoading, setIsLoading] = useState(true)
@@ -43,17 +45,26 @@ function App() {
     const account = ethers.utils.getAddress(accounts[0])
     setAccount(account)
 
+    const balance = await provider.getBalance(account)
+    setBalance(ethers.utils.formatUnits(balance.toString(), 18))
+
     // Fetch proposals count
     const count = await dao.proposalCount()
     let proposals = []
+    let votes = {}
 
     for (let no = 1; no <= count; no++) {
       // Fetch proposals
       const proposal = await dao.proposals(no)
       proposals.push(proposal)
+
+      // Fetch user votes 
+      const vote = await dao.votes(account, no)
+      votes[no] = vote
     }
     setProposals(proposals)
-
+    setVotes(votes);
+  
     // Fetch quorum
     setQuorum(await dao.quorum())
 
@@ -66,9 +77,19 @@ function App() {
     }
   }, [isLoading]);
 
+  // Add an event listener for MetaMask account changes
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', () => {
+        setIsLoading(true);
+      });
+    }
+  }, []);
+
+  console.log(balance)
   return (
     <Container>
-      <Navigation account={account} />
+      <Navigation account={account} balance={balance}/>
 
       <h1 className='my-4 text-center'>Welcome to our DAO!</h1>
 
@@ -76,15 +97,16 @@ function App() {
         <Loading />
       ) : (
         <>
-          <Create {...{ provider, dao, isLoading }} />
+          <Create {...{ provider, dao, setIsLoading }} />
           <hr />
-
           <p className='text-center'>
             <strong>Treasury Balance:</strong> {treasuryBalance} ETH
           </p>
-          
+          <p className='text-center'>
+            <strong>Quorum:</strong> {ethers.utils.formatUnits(quorum, 18)} ETH
+          </p>
           <hr />
-          <Proposals {...{ provider, proposals, dao, quorum, isLoading }} />
+          <Proposals {...{ provider, proposals, dao, quorum, votes, setIsLoading }} />
         </>
       )}
     </Container>

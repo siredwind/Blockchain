@@ -1,11 +1,24 @@
 import { Table, Button } from "react-bootstrap";
 import { ethers } from "ethers";
 
-const Proposals = ({ provider, dao, proposals, quorum, setIsLoading }) => {
+const Proposals = ({ provider, dao, proposals, quorum, votes, setIsLoading }) => {
     const voteHandler = async (id) => {
         try {
             const signer = await provider.getSigner()
             const transaction = await dao.connect(signer).vote(id)
+            await transaction.wait()
+        }
+        catch {
+            window.alert('User rejected or transaction reverted')
+        }
+
+        setIsLoading(true)
+    }
+
+    const downVoteHandler = async (id) => {
+        try {
+            const signer = await provider.getSigner()
+            const transaction = await dao.connect(signer).downvote(id)
             await transaction.wait()
         }
         catch {
@@ -53,7 +66,7 @@ const Proposals = ({ provider, dao, proposals, quorum, setIsLoading }) => {
                         <td>{proposal.votes.toString()}</td>
                         <td>
                             {
-                                !proposal.finalized &&
+                                !proposal.finalized && !votes[proposal.id] &&
                                 <Button
                                     variant="primary"
                                     style={{ width: '100%' }}
@@ -62,14 +75,24 @@ const Proposals = ({ provider, dao, proposals, quorum, setIsLoading }) => {
                                     Vote
                                 </Button>
                             }
+                            {
+                                !proposal.finalized && !votes[proposal.id] &&
+                                <Button
+                                    variant="primary"
+                                    style={{ width: '100%', background: 'red' }}
+                                    onClick={() => downVoteHandler(proposal.id)}
+                                >
+                                    Down Vote
+                                </Button>
+                            }
                         </td>
                         <td>
                             {
                                 !proposal.finalized && proposal.votes > quorum &&
-                                <Button 
-                                variant="primary" 
-                                style={{ width: '100%' }}
-                                onClick={() => finalizeHandler(proposal.id)}>
+                                <Button
+                                    variant="primary"
+                                    style={{ width: '100%' }}
+                                    onClick={() => finalizeHandler(proposal.id)}>
                                     Finalize
                                 </Button>
                             }
