@@ -1,0 +1,26 @@
+{
+  "id": "b6da1fb589f644da93f2d70727db8fc3",
+  "name": "#3",
+  "description": "A video of 5 generated music videos",
+  "video": "ipfs://QmQu4mWze2RD3aPu77vXgmpWrqzs8564kkuhPCaVaucUBJ/3.mp4",
+  "edition": 1,
+  "date": 1705411737,
+  "attributes": [
+    {
+      "trait_type": "Genre",
+      "value": "Dubstep"
+    },
+    {
+      "trait_type": "Length",
+      "value": "15"
+    },
+    {
+      "trait_type": "Description",
+      "value": "Lighted Tunnel"
+    },
+    {
+      "trait_type": "Remarkable",
+      "value": "Triangles"
+    }
+  ]
+}

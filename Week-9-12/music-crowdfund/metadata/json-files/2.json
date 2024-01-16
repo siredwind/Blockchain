@@ -1,0 +1,26 @@
+{
+  "id": "06b4c92b724e4234b57034fea9484ba9",
+  "name": "#2",
+  "description": "A video of 5 generated music videos",
+  "video": "ipfs://QmQu4mWze2RD3aPu77vXgmpWrqzs8564kkuhPCaVaucUBJ/2.mp4",
+  "edition": 1,
+  "date": 1705411737,
+  "attributes": [
+    {
+      "trait_type": "Genre",
+      "value": "Pop"
+    },
+    {
+      "trait_type": "Length",
+      "value": "12"
+    },
+    {
+      "trait_type": "Description",
+      "value": "A Guy Walking"
+    },
+    {
+      "trait_type": "Remarkable",
+      "value": "Headphones"
+    }
+  ]
+}

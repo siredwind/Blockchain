@@ -1,0 +1,26 @@
+{
+  "id": "3d3c73162875459fa561587075ab77cd",
+  "name": "#4",
+  "description": "A video of 5 generated music videos",
+  "video": "ipfs://QmQu4mWze2RD3aPu77vXgmpWrqzs8564kkuhPCaVaucUBJ/4.mp4",
+  "edition": 1,
+  "date": 1705411737,
+  "attributes": [
+    {
+      "trait_type": "Genre",
+      "value": "Classical"
+    },
+    {
+      "trait_type": "Length",
+      "value": "11"
+    },
+    {
+      "trait_type": "Description",
+      "value": "Playing Piano"
+    },
+    {
+      "trait_type": "Remarkable",
+      "value": "Hands"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "36e7a90af56844518e414a1805cedb92",
+  "name": "#5",
+  "description": "A video of 5 generated music videos",
+  "video": "ipfs://QmQu4mWze2RD3aPu77vXgmpWrqzs8564kkuhPCaVaucUBJ/5.mp4",
+  "edition": 1,
+  "date": 1705411737,
+  "attributes": [
+    {
+      "trait_type": "Genre",
+      "value": "Pop"
+    },
+    {
+      "trait_type": "Length",
+      "value": "15"
+    },
+    {
+      "trait_type": "Description",
+      "value": "Piano video effects"
+    },
+    {
+      "trait_type": "Remarkable",
+      "value": "Feathers"
+    }
+  ]
+}
