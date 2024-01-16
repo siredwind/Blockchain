@@ -16,7 +16,11 @@ contract MusicCrowdfunding is Ownable {
 
     // Struct to represent a campaign
     struct Campaign {
+        uint256 id; // Campaign ID
         address musician; // Address of the musician/creator
+        string title; // Name of the campaign
+        string description; // Details for the campaign
+        string url; // URL for the campaign (image, video, or link)
         uint256 goal; // Funding goal in wei
         uint256 raised; // Total funds raised in wei
         uint256 deadline; // Campaign deadline timestamp
@@ -26,13 +30,17 @@ contract MusicCrowdfunding is Ownable {
     // Mapping from campaign ID to Campaign
     mapping(uint256 => Campaign) public campaigns;
 
-    // Campaign counter
+    // Campaign counters
     uint256 public campaignCount;
+    uint256 public activeCampaignCount;
 
     // Event emitted when a new campaign is created
     event CampaignCreated(
         uint256 indexed campaignId,
         address indexed musician,
+        string title,
+        string description,
+        string url,
         uint256 goal,
         uint256 deadline
     );
@@ -71,24 +79,43 @@ contract MusicCrowdfunding is Ownable {
     }
 
     // Function to create a new campaign
-    function createCampaign(uint256 _goal, uint256 _durationInDays) external {
+    function createCampaign(
+        string memory _title,
+        string memory _description,
+        string memory _url,
+        uint256 _goal,
+        uint256 _durationInDays
+    ) external {
         require(_goal > 0, "Goal must be greater than zero");
         require(_durationInDays > 0, "Duration must be greater than zero");
 
         uint256 durationInSeconds = _durationInDays * 1 days;
         uint256 deadline = block.timestamp + durationInSeconds;
-        
+
         campaignCount++;
+        activeCampaignCount++;
 
         campaigns[campaignCount] = Campaign({
+            id: campaignCount,
             musician: msg.sender,
+            title: _title,
+            description: _description,
+            url: _url,
             goal: _goal,
             raised: 0,
             deadline: deadline,
             closed: false
         });
 
-        emit CampaignCreated(campaignCount, msg.sender, _goal, deadline);
+        emit CampaignCreated(
+            campaignCount,
+            msg.sender,
+            _title,
+            _description,
+            _url,
+            _goal,
+            deadline
+        );
     }
 
     // Function to fund a campaign
@@ -124,6 +151,9 @@ contract MusicCrowdfunding is Ownable {
 
         // Mark the campaign as closed
         campaign.closed = true;
+
+        // Decrease active campaign count
+        activeCampaignCount--;
     }
 
     // Function to retrieve campaign details
@@ -133,7 +163,11 @@ contract MusicCrowdfunding is Ownable {
         external
         view
         returns (
+            uint256 id,
             address musician,
+            string memory title,
+            string memory description,
+            string memory url,
             uint256 goal,
             uint256 raised,
             uint256 deadline,
@@ -142,7 +176,11 @@ contract MusicCrowdfunding is Ownable {
     {
         Campaign storage campaign = campaigns[_campaignId];
         return (
+            campaign.id,
             campaign.musician,
+            campaign.title,
+            campaign.description,
+            campaign.url,
             campaign.goal,
             campaign.raised,
             campaign.deadline,

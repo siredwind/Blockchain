@@ -7,8 +7,10 @@ const tokens = (n) => {
 
 const ether = tokens;
 
+const TITLE = 'Campaign #1';
+const DESCRIPTION = 'This is campaign #1 created by musician';
+const URL = "https://example.com/campaign";
 const GOAL = ether(1);
-const DEADLINE = 3000;
 const DEADLINE_IN_DAYS = 30;
 
 describe('Token', () => {
@@ -58,7 +60,7 @@ describe('Token', () => {
 
     describe('Success', () => {
       beforeEach(async () => {
-        transaction = await mc.connect(musician).createCampaign(GOAL, DEADLINE_IN_DAYS);
+        transaction = await mc.connect(musician).createCampaign(TITLE, DESCRIPTION, URL, GOAL, DEADLINE_IN_DAYS);
         await transaction.wait();
 
         // Get campaign details
@@ -89,6 +91,9 @@ describe('Token', () => {
         await expect(transaction).to.emit(mc, 'CampaignCreated').withArgs(
           1,
           musician.address,
+          TITLE,
+          DESCRIPTION,
+          URL,
           GOAL,
           (await ethers.provider.getBlock('latest')).timestamp + DEADLINE_IN_DAYS * 86400
         );
@@ -97,11 +102,11 @@ describe('Token', () => {
 
     describe('Failure', () => {
       it('Rejects a 0 goal campaign', async () => {
-        await (expect(mc.connect(musician).createCampaign(0, DEADLINE_IN_DAYS))).to.be.reverted;
+        await (expect(mc.connect(musician).createCampaign(TITLE, DESCRIPTION, URL, 0, DEADLINE_IN_DAYS))).to.be.reverted;
       })
 
       it('Rejects a 0 deadline campaign', async () => {
-        await (expect(mc.connect(musician).createCampaign(GOAL, 0))).to.be.reverted;
+        await (expect(mc.connect(musician).createCampaign(TITLE, DESCRIPTION, URL, GOAL, 0))).to.be.reverted;
       })
     })
   })
@@ -111,7 +116,7 @@ describe('Token', () => {
 
     beforeEach(async () => {
       // Create campaign
-      transaction = await mc.connect(musician).createCampaign(GOAL, DEADLINE_IN_DAYS);
+      transaction = await mc.connect(musician).createCampaign(TITLE, DESCRIPTION, URL, GOAL, DEADLINE_IN_DAYS);
       await transaction.wait();
 
       // Fund campaign
@@ -141,7 +146,7 @@ describe('Token', () => {
 
     beforeEach(async () => {
       // Create campaign
-      transaction = await mc.connect(musician).createCampaign(GOAL, DEADLINE_IN_DAYS);
+      transaction = await mc.connect(musician).createCampaign(TITLE, DESCRIPTION, URL, GOAL, DEADLINE_IN_DAYS);
       await transaction.wait();
 
       // Fund campaign

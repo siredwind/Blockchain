@@ -15,8 +15,6 @@ import reportWebVitals from './reportWebVitals';
 // RainbowKit
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { WagmiConfig } from 'wagmi';
-
-// Router
 import { BrowserRouter as Router } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -32,9 +30,8 @@ root.render(
         chains={chains}
       >
         <Router>
-
+          <App />
         </Router>
-        <App />
       </RainbowKitProvider>
     </WagmiConfig>
   </React.StrictMode>

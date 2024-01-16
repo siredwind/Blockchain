@@ -1,40 +1,61 @@
 import React from "react";
 
+// Icons
+import Facebook from "../../assets/facebook.png";
+import Youtube from "../../assets/youtube.avif";
+import Twitter from "../../assets/twitter.png";
+import Github from "../../assets/github.jpg";
+import Instagram from "../../assets/instagram.jpeg";
+import Tiktok from "../../assets/tiktok.png";
+
 const socialData = [
   {
-    name: "linkedin",
-    link: "#",
-  },
-  {
-    name: "github",
-    link: "#",
-  },
-  {
-    name: "twitter",
+    name: "facebook",
+    icon: <Facebook />,
     link: "#",
   },
   {
     name: "instagram",
+    icon: <Instagram />,
     link: "#",
   },
   {
-    name: "facebook",
+    name: "Tiktok",
+    icon: <Tiktok />,
     link: "#",
   },
   {
-    name: "email",
+    name: "youtube",
+    icon: <Youtube />,
+    link: "#",
+  },
+  {
+    name: "twitter",
+    icon: <Twitter />,
+    link: "#",
+  },
+  {
+    name: "github",
+    icon: <Github />,
     link: "#",
   },
 ];
+
 const Socials = () => {
   return (
-    <div className="flex overflow-hidden justify-around items-center gap-x-2 gap-y-2 my-2  max-md:grid max-md:auto-cols-[1fr] max-md:gap-x-2 max-md:gap-y-2 max-md:grid-cols-[1fr_1fr] max-md:grid-rows-[auto_auto]">
-      {socialData.map((social) => (
+    <div className="grid grid-cols-3 gap-x-2 gap-y-2 my-2">
+      {socialData.map((social, index) => (
         <a
+          key={index}
           href={social.link}
-          className="flex w-full min-h-[56px] justify-center items-center bg-[#131315] transition-[background-color] duration-300 ease-[ease-out] text-white text-lg leading-6 text-center tracking-[-0.01em] px-6 py-4 rounded-[99px]"
+          className="flex justify-center items-center bg-[#131315] text-white text-lg leading-6 text-center px-6 py-4 rounded-[99px] transition duration-300 ease-out"
         >
-          {social.name}
+          <img
+                    src={social.icon} // Replace with your campaign image URL
+                    alt={social.name}
+                    className="w-full rounded-xl"
+                    style={{ filter: 'brightness(0) invert(1)', backgroundColor: 'transparent' }}
+                />
         </a>
       ))}
     </div>

@@ -1,56 +1,95 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { ethers } from 'ethers';
+
+// ABIs 
+import MusicCrowdfunding_ABI from "../../abis/MusicCrowdfunding.json";
+import config from "../../config.json"
+
+// Components
 import Container from "../Container";
-import { ContactIcon } from "../Icons";
 import { FadeIn } from "../FadeIn";
-import Socials from "./Socials";
 import Campaign from "./Campaign";
 import News from "./News";
 
+// Hooks
+import { useContractRead, useContractReads, useNetwork } from "wagmi";
+import { MusicCrowdfundingFunctions } from "../../utils/constants";
+
 const Home = () => {
+  const { chain } = useNetwork();
+
+  const [campaignsDetails, setCampaignsDetails] = useState([]);
+
+  const musicCrowdFundingContract = {
+    address: config[chain.id].mc.address,
+    abi: MusicCrowdfunding_ABI,
+  }
+
+  // Get campaignCount
+  const {
+    data: campaignCount,
+    isError: campaignCountError,
+    isLoading: campaignCountLoading
+  } = useContractRead({
+    ...musicCrowdFundingContract,
+    functionName: MusicCrowdfundingFunctions.CAMPAIGN_COUNT
+  })
+
+  // Get activeCampaignCount
+  const {
+    data: activeCampaignCount,
+    isError: activeCampaignCountError,
+    isLoading: activeCampaignCountLoading
+  } = useContractRead({
+    ...musicCrowdFundingContract,
+    functionName: MusicCrowdfundingFunctions.ACTIVE_CAMPAIGN_COUNT
+  })
+
+  // Construct reads parameters
+  let contractsArray = [];
+  for (let campaignId = 1; campaignId <= parseInt(campaignCount); campaignId++) {
+    contractsArray.push({
+      ...musicCrowdFundingContract,
+      functionName: MusicCrowdfundingFunctions.GET_CAMPAIGN_DETAILS,
+      args: [campaignId]
+    })
+  }
+
+  // Get all campaign details
+  const { data: allCampaignDetails, isError, isLoading } = useContractReads({ contracts: contractsArray })
+
+  useEffect(() => {
+    if (allCampaignDetails && allCampaignDetails.length > 0) {
+      const allCampaigns = allCampaignDetails.reduce((acc, campaign) => {
+        const campaignDetails = {
+          id: parseInt(campaign.result[0]),
+          musician: campaign.result[1],
+          title: campaign.result[2],
+          description: campaign.result[3],
+          url: campaign.result[4],
+          goal: ethers.utils.formatEther(campaign.result[5]),
+          raised: ethers.utils.formatEther(campaign.result[6]),
+          deadline: new Date((campaign.result[7]).toString() * 1000).toLocaleString(),
+          closed: campaign.result[8]
+        }
+
+        if (campaignDetails) acc.push(campaignDetails);
+        return acc;
+      }, [])
+
+      setCampaignsDetails(allCampaigns);
+    }
+  }, [allCampaignDetails])
+
   return (
     <Container id="home">
       <FadeIn>
-        <News />
+        <News activeCampaigns={parseInt(activeCampaignCount)} />
       </FadeIn>
       <FadeIn>
-        <div className="grid gap-x-2 gap-y-2 grid-cols-[1fr_0.7fr] max-mdd:grid-cols-[1fr] grid-rows-[auto] my-2">
-          <Campaign />
-          <Campaign />
-          <div className="flex w-full max-w-[746px] flex-col items-start gap-x-8 gap-y-8 bg-[#131315] px-12 py-10 rounded-3xl max-mdd:max-w-none max-md:p-8">
-            {/* <img
-              src={pranay}
-              alt="sai pranay"
-              className="overflow-hidden w-[108px] h-[108px] flex-[0_0_auto] rounded-full"
-            /> */}
-            <h1 className="max-md:text-[40px] max-md:leading-[48px] max-md:tracking-[-0.01em]">
-              sai pranay
-              <br />
-              frontend developer{" "}
-              <span className="text-[#8a8a93]">
-                {" "}
-                who build things for the web.
-              </span>
-            </h1>
-          </div>
-          <div className="flex flex-col justify-between items-stretch gap-x-8 gap-y-8 bg-[#131315] text-center p-12 rounded-3xl max-md:p-8">
-            <div className="flex flex-col justify-center items-center mb-8 gap-3 max-md:mb-4">
-              <ContactIcon className="w-[112px] h-[112px] flex-[0_0_auto]" />
-              <h2 className="max-md:text-[40px] max-md:leading-[48px] max-md:tracking-[-0.01em]">
-                Have a project in mind?
-              </h2>
-            </div>
-            <a
-              href="mailto:mihai.munteanu1911@gmail.com"
-              className="min-h-[96px] bg-[#ff5e1a] transition-[background-color] duration-300 ease-[ease-out] text-[40px] leading-[48px] font-medium text-center tracking-[-0.01em] px-8 py-6 rounded-[99px] max-md:min-h-[80px] max-md:text-2xl max-md:leading-8 text-white"
-            >
-              mail@to.com
-              {/* <span className=" animate-pulse">👋</span> */}
-            </a>
-          </div>
+        <div className="flex flex-col items-center my-2">
+          {campaignsDetails.map(campaign => <Campaign campaign={campaign} />)}
         </div>
-      </FadeIn>
-      <FadeIn>
-        <Socials />
       </FadeIn>
     </Container>
   );
