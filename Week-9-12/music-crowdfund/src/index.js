@@ -12,10 +12,15 @@ import App from './App';
 import { chains, config } from './wagmi.config';
 import reportWebVitals from './reportWebVitals';
 
+// Redux
+import { Provider } from 'react-redux';
+
+// Store
+import { store } from './store/store';
+
 // RainbowKit
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { WagmiConfig } from 'wagmi';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -29,11 +34,11 @@ root.render(
         })}
         chains={chains}
       >
-        <Router>
-          <App />
-        </Router>
+        <Provider store={store}>
+      <App />
+    </Provider>
       </RainbowKitProvider>
-    </WagmiConfig>
+      </WagmiConfig>
   </React.StrictMode>
 );
 

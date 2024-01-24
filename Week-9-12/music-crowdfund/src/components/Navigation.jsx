@@ -1,10 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FadeIn } from './FadeIn';
-import RainbowMusicLogo from './RainbowMusicLogo';
+
+// RainbowKit
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-const Navbar = () => {
+// Components
+import { FadeIn } from './FadeIn';
+import RainbowMusicLogo from './RainbowMusicLogo';
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+
+// Store
+import { selectToken } from '../store/selectors';
+import { loadAccount, loadBalance } from '../store/interactions';
+
+const Navigation = () => {
+  const token = useSelector(selectToken);
+
+  const dispatch = useDispatch();
+
+  const connectHandler = async () => {
+    const account = await loadAccount(dispatch);
+    await loadBalance(token, account, dispatch);
+  }
+
+  useEffect(() => {
+    if (token)
+      connectHandler();
+  }, [token])
+
   return (
     <FadeIn>
       <div className="flex max-w-[1240px] justify-between max-sm:justify-center items-center bg-[#131315] mx-auto px-8 py-4 max-lg:mx-2 rounded-[999px] mt-6">
@@ -35,4 +60,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navigation;

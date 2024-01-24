@@ -39,7 +39,7 @@ const Campaign = ({ campaign }) => {
                     videoError
                         ? <img
                             src={MusicCampaignIcon}
-                            alt="Fallback Image"
+                            alt="Fallback"
                             className="w-full rounded-xl"
                             style={{ filter: 'brightness(0) invert(1)', backgroundColor: 'transparent' }}
                         />

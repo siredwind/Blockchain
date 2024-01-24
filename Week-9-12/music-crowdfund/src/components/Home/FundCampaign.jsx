@@ -4,12 +4,9 @@ import PropTypes from 'prop-types';
 import ThankYouMessage from './ThankYouMessage';
 
 // Utils
-import { useAccount } from 'wagmi';
-import { useContractWrite, usePrepareContractWrite } from "wagmi";
-import useContract from '../../utils/hooks/useContract';
-import { MusicCrowdfundingFunctions } from '../../utils/constants';
-import useCheckAllowance from '../../utils/hooks/useCheckAllowance';
-import useApproveTokens from '../../utils/hooks/useApproveTokens';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectMC, selectProvider, selectToken } from '../../store/selectors';
+import { fundCampaign } from '../../store/interactions';
 
 const tokens = (n) => {
     return ethers.utils.parseUnits(n.toString(), 'ether')
@@ -47,30 +44,16 @@ const inputStyle = {
     backgroundColor: 'black'
 };
 
-const FundCampaign = ({ campaignId, isOpen, onClose, onSubmit }) => {
+const FundCampaign = ({ campaignId, isOpen, onClose }) => {
     const [amount, setAmount] = useState('1');
     const [showThankYou, setShowThankYou] = useState(false);
     const modalRef = useRef();
 
-    const { data: userAccount } = useAccount();
+    const dispatch = useDispatch();
 
-    const { contract: musicCrowdFundingContract } = useContract('MusicCrowdfunding');
-
-    const { allowance } = useCheckAllowance({
-        owner: userAccount?.address,
-        spender: musicCrowdFundingContract?.address
-    });
-
-    const writeApprove = useApproveTokens({
-        spender: musicCrowdFundingContract?.address,
-        amount: tokens(amount)
-    })
-
-    const { write } = useContractWrite({
-        ...musicCrowdFundingContract,
-        functionName: MusicCrowdfundingFunctions.FUND_CAMPAIGN,
-        args: [campaignId, tokens(amount)]
-    })
+    const provider = useSelector(selectProvider);
+    const mc = useSelector(selectMC);
+    const token = useSelector(selectToken);
 
     const handleClose = useCallback(
         (e) => {
@@ -96,26 +79,15 @@ const FundCampaign = ({ campaignId, isOpen, onClose, onSubmit }) => {
         // Prevent the default form submission action
         e.preventDefault();
 
-        if (parseFloat(ethers.utils.formatUnits(allowance, 'ether')) < parseFloat(amount)) {
-            // Execute token approval and wait for it to complete
-            try {
-                const approvalTx = await writeApprove();
-                console.log(approvalTx, "@@@@tx")
-                if (approvalTx) {
-                    // Wait for the approval transaction to be mined
-                    await approvalTx.wait(); 
-                    console.log("HERE@@@@@")
-                    // After approval, execute the fund campaign transaction
-                    write?.();
-                }
-            } catch (error) {
-                console.error('Approval failed', error);
-                return; // Exit the function if approval fails
-            }
-        } else {
-            // If sufficient allowance is already there, directly execute the fund campaign transaction
-            write?.();
-        }
+        // Fund campaign
+        fundCampaign(
+            provider,
+            mc,
+            token,
+            campaignId,
+            tokens(amount),
+            dispatch
+        );
 
         // Close the modal
         onClose();
@@ -129,17 +101,14 @@ const FundCampaign = ({ campaignId, isOpen, onClose, onSubmit }) => {
     const handleChange = (e) => {
         const newAmount = e.target.value;
         setAmount(newAmount); // Update the amount state
-        console.log(newAmount, "@@@@newAmount")
     };
-    // console.log(amount, "@@@@amount")
-    // console.log(amountInWei, "@@@@wei")
+
     return isOpen ? (
         <div style={modalOverlayStyle} ref={modalRef} onClick={handleClose}>
             <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
                 <form>
                     <label style={{ display: 'block', marginBottom: '5px' }}>
-                        Amount (ETH):
-                        <input
+                        Amount (ETH): <input
                             style={inputStyle}
                             type="number"
                             value={amount}
@@ -148,7 +117,6 @@ const FundCampaign = ({ campaignId, isOpen, onClose, onSubmit }) => {
                     </label>
                     <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-12"
-                        disabled={!write}
                         onClick={handleFormSubmit}
                     >
                         Fund Artist's Campaign
@@ -163,8 +131,7 @@ const FundCampaign = ({ campaignId, isOpen, onClose, onSubmit }) => {
 FundCampaign.propTypes = {
     campaignId: PropTypes.number.isRequired,
     isOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired
 };
 
 export default FundCampaign;
