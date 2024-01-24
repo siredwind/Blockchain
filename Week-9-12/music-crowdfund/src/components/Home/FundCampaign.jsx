@@ -4,9 +4,16 @@ import PropTypes from 'prop-types';
 import ThankYouMessage from './ThankYouMessage';
 
 // Utils
+import { useAccount } from 'wagmi';
 import { useContractWrite, usePrepareContractWrite } from "wagmi";
-import useMusicCrowdfundingContract from '../../utils/hooks/useMusicCrowdfundingContract';
+import useContract from '../../utils/hooks/useContract';
 import { MusicCrowdfundingFunctions } from '../../utils/constants';
+import useCheckAllowance from '../../utils/hooks/useCheckAllowance';
+import useApproveTokens from '../../utils/hooks/useApproveTokens';
+
+const tokens = (n) => {
+    return ethers.utils.parseUnits(n.toString(), 'ether')
+}
 
 const modalOverlayStyle = {
     position: 'fixed',
@@ -42,16 +49,27 @@ const inputStyle = {
 
 const FundCampaign = ({ campaignId, isOpen, onClose, onSubmit }) => {
     const [amount, setAmount] = useState('1');
-    const [amountInWei, setAmountInWei] = useState(null);
     const [showThankYou, setShowThankYou] = useState(false);
     const modalRef = useRef();
 
-    const musicCrowdFundingContract = useMusicCrowdfundingContract();
+    const { data: userAccount } = useAccount();
+
+    const { contract: musicCrowdFundingContract } = useContract('MusicCrowdfunding');
+
+    const { allowance } = useCheckAllowance({
+        owner: userAccount?.address,
+        spender: musicCrowdFundingContract?.address
+    });
+
+    const writeApprove = useApproveTokens({
+        spender: musicCrowdFundingContract?.address,
+        amount: tokens(amount)
+    })
 
     const { write } = useContractWrite({
         ...musicCrowdFundingContract,
         functionName: MusicCrowdfundingFunctions.FUND_CAMPAIGN,
-        args: [campaignId, amountInWei]
+        args: [campaignId, tokens(amount)]
     })
 
     const handleClose = useCallback(
@@ -62,10 +80,6 @@ const FundCampaign = ({ campaignId, isOpen, onClose, onSubmit }) => {
         },
         [onClose]
     );
-    
-    useEffect(() => {
-        setAmountInWei(ethers.utils.parseUnits(amount, 'ether'))
-    }, [amount])
 
     useEffect(() => {
         const keyPress = (e) => {
@@ -78,24 +92,47 @@ const FundCampaign = ({ campaignId, isOpen, onClose, onSubmit }) => {
         return () => document.removeEventListener('keydown', keyPress);
     }, [isOpen, onClose]);
 
-    const handleFormSubmit = (e) => {
-        e.preventDefault();  // Prevent the default form submission action
+    const handleFormSubmit = async (e) => {
+        // Prevent the default form submission action
+        e.preventDefault();
 
-        // Assuming write is a function that triggers the smart contract call
-        write?.();
+        if (parseFloat(ethers.utils.formatUnits(allowance, 'ether')) < parseFloat(amount)) {
+            // Execute token approval and wait for it to complete
+            try {
+                const approvalTx = await writeApprove();
+                console.log(approvalTx, "@@@@tx")
+                if (approvalTx) {
+                    // Wait for the approval transaction to be mined
+                    await approvalTx.wait(); 
+                    console.log("HERE@@@@@")
+                    // After approval, execute the fund campaign transaction
+                    write?.();
+                }
+            } catch (error) {
+                console.error('Approval failed', error);
+                return; // Exit the function if approval fails
+            }
+        } else {
+            // If sufficient allowance is already there, directly execute the fund campaign transaction
+            write?.();
+        }
 
-        onSubmit(amountInWei); // Handle the form submission
-        onClose(); // Close the modal
+        // Close the modal
+        onClose();
 
         setShowThankYou(true);
-        setTimeout(() => setShowThankYou(false), 3000); // Hide the message after 3 seconds
+
+        // Hide the message after 3 seconds
+        setTimeout(() => setShowThankYou(false), 3000);
     };
 
     const handleChange = (e) => {
         const newAmount = e.target.value;
         setAmount(newAmount); // Update the amount state
+        console.log(newAmount, "@@@@newAmount")
     };
-
+    // console.log(amount, "@@@@amount")
+    // console.log(amountInWei, "@@@@wei")
     return isOpen ? (
         <div style={modalOverlayStyle} ref={modalRef} onClick={handleClose}>
             <div style={modalStyle} onClick={(e) => e.stopPropagation()}>

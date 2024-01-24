@@ -26,9 +26,20 @@ contract MusicCrowdfunding is Ownable {
         uint256 deadline; // Campaign deadline timestamp
         bool closed; // Flag to indicate if the campaign is closed
     }
+    // Struct to represent social media links
+    struct SocialLinks {
+        string facebook;
+        string instagram;
+        string tiktok;
+        string youtube;
+        string twitter;
+        string github;
+    }
 
     // Mapping from campaign ID to Campaign
     mapping(uint256 => Campaign) public campaigns;
+    // Mapping from campaign ID to social media links
+    mapping(uint256 => SocialLinks) public campaignSocialLinks;
 
     // Campaign counters
     uint256 public campaignCount;
@@ -122,7 +133,7 @@ contract MusicCrowdfunding is Ownable {
     function fundCampaign(
         uint256 _campaignId,
         uint256 _amount
-    ) external campaignOpen(_campaignId) {
+    ) external campaignOpen(_campaignId) payable {
         require(_amount > 0, "Amount must be greater than zero");
 
         // Transfer funds from the backer to the contract
@@ -185,6 +196,52 @@ contract MusicCrowdfunding is Ownable {
             campaign.raised,
             campaign.deadline,
             campaign.closed
+        );
+    }
+
+    function updateSocialLinks(
+        uint256 _campaignId,
+        string memory _newFacebook,
+        string memory _newInstagram,
+        string memory _newTiktok,
+        string memory _newYoutube,
+        string memory _newTwitter,
+        string memory _newGithub
+    ) external onlyMusician(_campaignId) {
+        SocialLinks memory links = SocialLinks({
+            facebook: _newFacebook,
+            instagram: _newInstagram,
+            tiktok: _newTiktok,
+            youtube: _newYoutube,
+            twitter: _newTwitter,
+            github: _newGithub
+        });
+
+        campaignSocialLinks[_campaignId] = links;
+    }
+
+    function getSocialLinks(
+        uint256 _campaignId
+    )
+        external
+        view
+        returns (
+            string memory facebook,
+            string memory instagram,
+            string memory tiktok,
+            string memory youtube,
+            string memory twitter,
+            string memory github
+        )
+    {
+        SocialLinks storage links = campaignSocialLinks[_campaignId];
+        return (
+            links.facebook,
+            links.instagram,
+            links.tiktok,
+            links.youtube,
+            links.twitter,
+            links.github
         );
     }
 }

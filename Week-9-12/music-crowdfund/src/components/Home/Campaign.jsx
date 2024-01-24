@@ -10,6 +10,7 @@ import FundCampaign from "./FundCampaign";
 
 const Campaign = ({ campaign }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [videoError, setVideoError] = useState(false);
 
     const handleFundClick = () => {
         setIsModalOpen(true);
@@ -19,11 +20,11 @@ const Campaign = ({ campaign }) => {
         // e.preventDefault();
         // Here you would typically handle the submission, e.g., sending data to a server or blockchain
         setIsModalOpen(false);
-        
+
     };
 
     const fundsRaisedPercentage = (parseInt(campaign.raised) / parseInt(campaign.goal)) * 100;
- 
+
     return (
         <div className="flex flex-row w-full">
             {/* Campaign Owner and Social Links */}
@@ -34,12 +35,22 @@ const Campaign = ({ campaign }) => {
 
             {/* Campaign Details */}
             <div className="flex flex-col w-2/3 bg-[#131315] px-12 py-10 rounded-3xl my-2">
-                <img
-                    src={MusicCampaignIcon} // Replace with your campaign image URL
-                    alt="Campaign Thumbnail"
-                    className="w-full rounded-xl"
-                    style={{ filter: 'brightness(0) invert(1)', backgroundColor: 'transparent' }}
-                />
+                {
+                    videoError
+                        ? <img
+                            src={MusicCampaignIcon}
+                            alt="Fallback Image"
+                            className="w-full rounded-xl"
+                            style={{ filter: 'brightness(0) invert(1)', backgroundColor: 'transparent' }}
+                        />
+                        : <video
+                            src={`https://gateway.pinata.cloud/ipfs/QmQu4mWze2RD3aPu77vXgmpWrqzs8564kkuhPCaVaucUBJ/${campaign.id}.mp4`}
+                            className="w-full rounded-xl"
+                            style={{ backgroundColor: 'transparent' }}
+                            controls
+                            onError={() => setVideoError(true)}
+                        />
+                }
                 <h2 className="text-white text-xl font-bold text-left">{campaign.title}</h2>
                 <h5 className="flex items-center text-sm text-left">
                     <img src={CommentIcon} alt="Comment" style={{ filter: 'brightness(0) invert(1)', width: "20px", height: "20px" }} />

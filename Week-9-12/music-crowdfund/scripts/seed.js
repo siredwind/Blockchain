@@ -35,28 +35,54 @@ async function main() {
   const mc = await hre.ethers.getContractAt('MusicCrowdfunding', config[chainId].mc.address);
   console.log(`MusicCrowdfunding fetched: ${mc.address}\n`);
 
+  const funderBalance = await token.balanceOf(funder.address);
+  console.log(`Funder's token balance: ${hre.ethers.utils.formatUnits(funderBalance, 'ether')} \n`);
+
   // Send tokens to investors - each one gets 20%
-  transaction = await token.transfer(musician1.address, tokens(10000));
+  transaction = await token.connect(funder).transfer(musician1.address, tokens(10000));
   await transaction.wait();
 
-  transaction = await token.transfer(musician2.address, tokens(10000));
+  transaction = await token.connect(funder).transfer(musician2.address, tokens(10000));
   await transaction.wait();
 
-  transaction = await token.transfer(fan1.address, tokens(10000));
+  transaction = await token.connect(funder).transfer(fan1.address, tokens(10000));
   await transaction.wait();
 
-  transaction = await token.transfer(fan2.address, tokens(10000));
+  transaction = await token.connect(funder).transfer(fan2.address, tokens(10000));
   await transaction.wait();
 
   // Musician1 creates a campaign
-  transaction = await mc.connect(musician1).createCampaign('Campaign #1', 'This is campaign #1 created by musician1', 'URL #1', tokens(100), 30);
+  transaction = await mc.connect(musician1).createCampaign(
+    'Campaign #1', 'This is campaign #1 created by musician1',
+    'URL #1',
+    tokens(100),
+    300
+  );
   await transaction.wait();
   console.log(`Musician1 created a campaign. \n`)
 
   // Musician2 creates a campaign
-  transaction = await mc.connect(musician2).createCampaign('Campaign #2', 'This is campaign #2 created by musician2', 'URL #2', tokens(100), 30);
+  transaction = await mc.connect(musician2).createCampaign(
+    'Campaign #2',
+    'This is campaign #2 created by musician2',
+    'URL #2',
+    tokens(100),
+    300
+  );
   await transaction.wait();
   console.log(`Musician2 created a campaign. \n`)
+
+  // Fan1 approves transfer of 10 tokens
+  transaction = await token.connect(fan1).approve(mc.address, tokens(10));
+  await transaction.wait();
+
+  // Fan1 funds 10 tokens to campaign1
+  transaction = await mc.connect(fan1).fundCampaign(
+    1,
+    tokens(10)
+  )
+  await transaction.wait();
+  console.log(`Fan1 funded ${hre.ethers.utils.formatUnits(tokens(10), 'ether')} to campaign1. \n`)
 
   console.log(`Finished.\n`);
 }

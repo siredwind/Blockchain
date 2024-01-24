@@ -1,46 +1,48 @@
 import React, { useState } from "react";
 import { FadeIn } from "../FadeIn";
-
-const popularGenres = [
-  "Pop",
-  "Rock",
-  "Hip-Hop",
-  "R&B",
-  "Electronic",
-  "Country",
-  "Jazz",
-  "Classical",
-  "Reggae",
-  "Metal",
-  "Blues",
-  "Folk",
-  "Indie",
-  "Alternative",
-];
+import SocialLinksFields from "./SocialLinksFields";
+import SocialLinksButton from "./SocialLinksButton";
 
 const CreateCampaign = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    url: "",
-    goal: "",
-    deadline: "",
-    genres: [],
+    media: "",
+    goal: "1",
+    deadline: "30",
+    isUpload: true,
+    facebook: "",
+    instagram: "",
+    tiktok: "",
+    youtube: "",
+    twitter: "",
+    github: "",
+    showSocialLinks: false // New state for showing social links
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "genres") {
-      // Handle multiple genre selections
-      const selectedGenres = formData.genres.includes(value)
-        ? formData.genres.filter((genre) => genre !== value)
-        : [...formData.genres, value];
-
-      setFormData({ ...formData, [name]: selectedGenres });
+    if (name === "media" && formData.isUpload) {
+      setFormData({ ...formData, [name]: e.target.files[0] }); // Handle file upload
     } else {
       setFormData({ ...formData, [name]: value });
     }
+  };
+
+  const handleToggle = () => {
+    setFormData({
+      ...formData,
+      isUpload: !formData.isUpload,
+      media: "", // Reset media field when toggling
+    });
+  }
+
+  const handleToggleSocialLinks = () => {
+    setFormData({
+      ...formData,
+      showSocialLinks: !formData.showSocialLinks
+    });
   };
 
   const handleSubmit = (e) => {
@@ -78,15 +80,34 @@ const CreateCampaign = () => {
           </div>
 
           <div>
-            <label className="text-white">URL (Image/Video)</label>
-            <input
-              type="url"
-              name="url"
-              value={formData.url}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 text-white bg-gray-700 rounded-md focus:ring focus:ring-blue-500"
-            />
+            <label className="text-white flex items-center">
+              <input
+                type="checkbox"
+                checked={formData.isUpload}
+                onChange={handleToggle}
+                className="mr-2"
+              />
+              Upload File
+            </label>
+
+            {formData.isUpload ? (
+              <input
+                type="file"
+                name="media"
+                onChange={handleChange}
+                accept="image/*, video/*"
+                className="w-full px-4 py-2 text-white bg-gray-700 rounded-md focus:ring focus:ring-blue-500"
+              />
+            ) : (
+              <input
+                type="url"
+                name="media"
+                value={formData.media}
+                onChange={handleChange}
+                placeholder="Enter URL"
+                className="w-full px-4 py-2 text-white bg-gray-700 rounded-md focus:ring focus:ring-blue-500"
+              />
+            )}
           </div>
 
           <div>
@@ -112,6 +133,9 @@ const CreateCampaign = () => {
               className="w-full px-4 py-2 text-white bg-gray-700 rounded-md focus:ring focus:ring-blue-500"
             />
           </div>
+            
+          <SocialLinksButton onClick={handleToggleSocialLinks} />
+          <SocialLinksFields data={formData}onChange={handleChange}/>
 
           <button
             type="submit"

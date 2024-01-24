@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from 'ethers';
 
-// ABIs 
-import MusicCrowdfunding_ABI from "../../abis/MusicCrowdfunding.json";
-import config from "../../config.json"
-
 // Components
 import Container from "../Container";
 import { FadeIn } from "../FadeIn";
@@ -12,18 +8,16 @@ import Campaign from "./Campaign";
 import News from "./News";
 
 // Hooks
-import { useContractRead, useContractReads, useNetwork } from "wagmi";
+import { useContractRead, useContractReads } from "wagmi";
+import useContract from "../../utils/hooks/useContract";
+
+// Utils
 import { MusicCrowdfundingFunctions } from "../../utils/constants";
 
 const Home = () => {
-  const { chain } = useNetwork();
-
   const [campaignsDetails, setCampaignsDetails] = useState([]);
 
-  const musicCrowdFundingContract = {
-    address: config[chain.id].mc.address,
-    abi: MusicCrowdfunding_ABI,
-  }
+  const { contract: musicCrowdFundingContract } = useContract('MusicCrowdfunding');
 
   // Get campaignCount
   const {
@@ -56,7 +50,11 @@ const Home = () => {
   }
 
   // Get all campaign details
-  const { data: allCampaignDetails, isError, isLoading } = useContractReads({ contracts: contractsArray })
+  const {
+    data: allCampaignDetails,
+    isError,
+    isLoading
+  } = useContractReads({ contracts: contractsArray })
 
   useEffect(() => {
     if (allCampaignDetails && allCampaignDetails.length > 0) {
