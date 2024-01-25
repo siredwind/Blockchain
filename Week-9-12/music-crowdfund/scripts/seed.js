@@ -12,6 +12,10 @@ const tokens = (n) => {
 }
 
 async function main() {
+  GATEWAY_PINATA_URL = "https://gateway.pinata.cloud/ipfs/";
+  BASE_URI = "QmcqJAkZoXA33PxEeQQrWCTVNgXDjg3S2yXz7xXSUYjiVP/";
+  BASE_EXT = ".json";
+
   console.log(`Fetching accounts & network... \n`);
   const accounts = await hre.ethers.getSigners();
   const funder = accounts[0];
@@ -53,24 +57,58 @@ async function main() {
 
   // Musician1 creates a campaign
   transaction = await mc.connect(musician1).createCampaign(
-    'Campaign #1', 'This is campaign #1 created by musician1',
-    'URL #1',
+    '3 Latino Girls',
+    'Campaign created for a raggaeton song released by 3 latino girls.',
+    `${GATEWAY_PINATA_URL}${BASE_URI}1${BASE_EXT}`,
     tokens(100),
     300
   );
   await transaction.wait();
-  console.log(`Musician1 created a campaign. \n`)
+  console.log(`Musician1 created campaign 1. \n`)
 
   // Musician2 creates a campaign
   transaction = await mc.connect(musician2).createCampaign(
-    'Campaign #2',
-    'This is campaign #2 created by musician2',
-    'URL #2',
+    'Walking Past',
+    'Campaign created for a pop song released by an artist walking with headphones and singing.',
+    `${GATEWAY_PINATA_URL}${BASE_URI}2${BASE_EXT}`,
     tokens(100),
     300
   );
   await transaction.wait();
-  console.log(`Musician2 created a campaign. \n`)
+  console.log(`Musician2 created a campaign 2. \n`)
+
+  // Musician1 creates a campaign
+  transaction = await mc.connect(musician1).createCampaign(
+    'Techno vibes',
+    'Campaign created for a dubstep song released by Deadmau.',
+    `${GATEWAY_PINATA_URL}${BASE_URI}3${BASE_EXT}`,
+    tokens(100),
+    300
+  );
+  await transaction.wait();
+  console.log(`Musician1 created campaign 3. \n`)
+
+  // Musician2 creates a campaign
+  transaction = await mc.connect(musician2).createCampaign(
+    'Prelude',
+    'Campaign created for a classical song released by Yann Tiersen.',
+    `${GATEWAY_PINATA_URL}${BASE_URI}4${BASE_EXT}`,
+    tokens(100),
+    300
+  );
+  await transaction.wait();
+  console.log(`Musician2 created a campaign 4. \n`)
+
+  // Musician1 creates a campaign
+  transaction = await mc.connect(musician1).createCampaign(
+    'Sad Goodbye',
+    'Campaign created for a pop song released by a new pop star.',
+    `${GATEWAY_PINATA_URL}${BASE_URI}5${BASE_EXT}`,
+    tokens(100),
+    300
+  );
+  await transaction.wait();
+  console.log(`Musician1 created campaign 5. \n`)
 
   // Fan1 approves transfer of 10 tokens
   transaction = await token.connect(fan1).approve(mc.address, tokens(10));

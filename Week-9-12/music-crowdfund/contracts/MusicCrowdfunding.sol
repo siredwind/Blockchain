@@ -9,7 +9,7 @@ contract MusicCrowdfunding is Ownable {
     using SafeERC20 for IERC20;
     // ERC20 token used for funding (can be modified based on your needs)
     IERC20 public token;
-
+    
     constructor(address _tokenAddress) Ownable(msg.sender) {
         token = IERC20(_tokenAddress);
     }
@@ -133,7 +133,7 @@ contract MusicCrowdfunding is Ownable {
     function fundCampaign(
         uint256 _campaignId,
         uint256 _amount
-    ) external campaignOpen(_campaignId) payable {
+    ) external payable campaignOpen(_campaignId) {
         require(_amount > 0, "Amount must be greater than zero");
 
         // Transfer funds from the backer to the contract
