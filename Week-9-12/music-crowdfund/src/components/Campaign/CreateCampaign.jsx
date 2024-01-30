@@ -1,34 +1,44 @@
 import React, { useState } from "react";
+
+// Components
 import { FadeIn } from "../FadeIn";
 import SocialLinksFields from "./SocialLinksFields";
 import SocialLinksButton from "./SocialLinksButton";
+import { Spinner } from "react-bootstrap";
+
+// Utils
+import {
+  InitCampaignData,
+  InitSocialLinks
+} from "../../utils/constants";
+import useCampaignCreate from "../../utils/hooks/useCampaignCreate";
 
 const CreateCampaign = () => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    media: "",
-    goal: "1",
-    deadline: "30",
-    isUpload: true,
-    facebook: "",
-    instagram: "",
-    tiktok: "",
-    youtube: "",
-    twitter: "",
-    github: "",
-    showSocialLinks: false // New state for showing social links
-  });
+  const [formData, setFormData] = useState({ ...InitCampaignData });
+  const [socialLinks, setSocialLinks] = useState({ ...InitSocialLinks });
+  const [showSocialLinks, setShowSocialLinks] = useState(false);
+
+  const {
+    createCampaignCall,
+    isLoading,
+    successMessage,
+    errorMessage
+  } = useCampaignCreate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "media" && formData.isUpload) {
-      setFormData({ ...formData, [name]: e.target.files[0] }); // Handle file upload
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    const naming = (name === "media" && formData.isUpload)
+      ? e.target.files[0]
+      : value
+
+    setFormData({ ...formData, [name]: naming });
   };
+
+  const handleSocialLinksChange = (e) => {
+    const { name, value } = e.target;
+    setSocialLinks({ ...socialLinks, [name]: value });
+  }
 
   const handleToggle = () => {
     setFormData({
@@ -38,17 +48,15 @@ const CreateCampaign = () => {
     });
   }
 
-  const handleToggleSocialLinks = () => {
-    setFormData({
-      ...formData,
-      showSocialLinks: !formData.showSocialLinks
-    });
-  };
+  const handleToggleSocialLinks = () => setShowSocialLinks(prevState => !prevState);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add form submission logic here (e.g., send data to the backend)
-    console.log(formData); // For testing, you can log the form data
+
+    await createCampaignCall({
+      formData,
+      socialLinks
+    });
   };
 
   return (
@@ -86,9 +94,7 @@ const CreateCampaign = () => {
                 checked={formData.isUpload}
                 onChange={handleToggle}
                 className="mr-2"
-              />
-              Upload File
-            </label>
+              />Upload File</label>
 
             {formData.isUpload ? (
               <input
@@ -133,17 +139,35 @@ const CreateCampaign = () => {
               className="w-full px-4 py-2 text-white bg-gray-700 rounded-md focus:ring focus:ring-blue-500"
             />
           </div>
-            
+
           <SocialLinksButton onClick={handleToggleSocialLinks} />
-          <SocialLinksFields data={formData}onChange={handleChange}/>
+
+          <SocialLinksFields
+            data={socialLinks}
+            showSocialLinks={showSocialLinks}
+            onChange={handleSocialLinksChange}
+          />
 
           <button
             type="submit"
             className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:ring focus:ring-blue-400"
+            disabled={isLoading}
           >
-            Create Campaign
+            {isLoading ? <Spinner /> : "Create Campaign"}
           </button>
         </form>
+
+        {successMessage && (
+          <div className="text-center my-4 p-4 bg-green-200 text-green-800 rounded-md">
+            {successMessage}
+          </div>
+        )}
+
+        {errorMessage && (
+          <div className="text-center my-4 p-4 bg-red-200 text-red-800 rounded-md">
+            {errorMessage}
+          </div>
+        )}
       </div>
     </FadeIn>
   );

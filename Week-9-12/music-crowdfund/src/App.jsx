@@ -55,17 +55,15 @@ const App = () => {
   }, []);
 
   return (
-    <>
-      <HashRouter>
-        <Navigation />
+    <HashRouter>
+      <Navigation />
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/create-campaign" element={<CreateCampaign />} />
-        </Routes>
-      
-      </HashRouter>
-    </>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/create-campaign" element={<CreateCampaign />} />
+      </Routes>
+
+    </HashRouter>
   );
 };
 

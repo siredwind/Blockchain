@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import Socials from "./Socials";
 
 // Icons
-import MusicCampaignIcon from "../../assets/music-campaign.png"
+import MusicCampaignIcon from "../../assets/music-campaign.png";
+import MusicianIcon from "../../assets/musician.svg";
 import CommentIcon from "../../assets/comment.png";
 import EtherIcon from "../../assets/ether.png";
 import FundCampaign from "./FundCampaign";
@@ -16,20 +17,16 @@ const Campaign = ({ campaign }) => {
         setIsModalOpen(true);
     };
 
-    const handleSubmit = () => {
-        // e.preventDefault();
-        // Here you would typically handle the submission, e.g., sending data to a server or blockchain
-        setIsModalOpen(false);
-
-    };
-
     const fundsRaisedPercentage = (parseInt(campaign.raised) / parseInt(campaign.goal)) * 100;
 
     return (
         <div className="flex flex-row w-full">
             {/* Campaign Owner and Social Links */}
-            <div className="flex flex-col items-start justify-center w-1/3 p-4">
-                <span className="text-white text-sm mb-2">Musician: {campaign.musician}</span>
+            <div className="flex flex-col items-center justify-center p-4">
+                <div className="flex items-center mb-2">
+                    <img src={MusicianIcon} alt="Musician" className="w-6 h-6 mr-2" style={{ filter: "brightness(0) invert(1)", width: "25px", height: "25px" }} />
+                    <span className="text-white text-xl">{campaign.musician.slice(0,4)}...{campaign.musician.slice(38, 42)}</span>
+                </div>
                 <Socials />
             </div>
 
@@ -44,7 +41,7 @@ const Campaign = ({ campaign }) => {
                             style={{ filter: 'brightness(0) invert(1)', backgroundColor: 'transparent' }}
                         />
                         : <video
-                            src={`https://gateway.pinata.cloud/ipfs/QmQu4mWze2RD3aPu77vXgmpWrqzs8564kkuhPCaVaucUBJ/${campaign.id}.mp4`}
+                            src={`${process.env.REACT_APP_PINATA_GATEWAY}/${process.env.REACT_APP_VIDEO_URI}/${campaign.id}.mp4`}
                             className="w-full rounded-xl"
                             style={{ backgroundColor: 'transparent' }}
                             controls
@@ -81,7 +78,6 @@ const Campaign = ({ campaign }) => {
                 campaignId={campaign.id}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSubmit={handleSubmit}
             />
         </div>
     )
