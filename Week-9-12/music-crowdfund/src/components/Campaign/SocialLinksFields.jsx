@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const socialMediaArray = [
     "facebook", 
     "instagram", 
@@ -7,12 +9,11 @@ const socialMediaArray = [
     "github"
 ];
 
-const SocialLinksFields = ({ data, onChange }) => {
+const SocialLinksFields = ({ data, showSocialLinks, onChange }) => {
     return (
         <>
-            {data.showSocialLinks && (
+            {showSocialLinks && (
                 <div className="space-y-4 mt-4">
-                    {/* Map through each social media field */}
                     {socialMediaArray.map((socialMedia) => (
                         <div key={socialMedia}>
                             <label className="text-white capitalize">{socialMedia}</label>
@@ -31,5 +32,11 @@ const SocialLinksFields = ({ data, onChange }) => {
         </>
     )
 }
+
+SocialLinksFields.propTypes = {
+    data: PropTypes.object,
+    showSocialLinks: PropTypes.bool,
+    onChange: PropTypes.func
+};
 
 export default SocialLinksFields;
