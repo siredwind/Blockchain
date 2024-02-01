@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 import { ethers } from "ethers";
 
 export const selectProvider = state => state.provider.connection;
-export const selectChainId = state => state.provider.chainId;
+export const selectChainId = state => state.provider?.chainId;
 export const selectAccount = state => state.provider.account;
 export const selectToken = state => state.token.contract;
 export const selectMC = state => state.mc.contract;

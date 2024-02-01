@@ -1,11 +1,39 @@
 import axios from 'axios';
 import { MetadataTemplate } from "./constants";
 
-export const pinFileToIPFS = async (file, fileName) => {
+export const fetchMetadataFromIPFS = async (metadataUrl) => {
+    try {
+        const response = await axios.get(metadataUrl);
+        if (response.status !== 200) {
+            throw new Error(`Failed to fetch metadata: Status code ${response.status}`);
+        }
+
+        let videoHash;
+        if (response.data.video && response.data.video.includes('ipfs://')) {
+            videoHash = response.data.video.replace("ipfs://", "");
+        }
+        else {
+            videoHash = response.data.video;
+        }
+
+        return `${process.env.REACT_APP_PINATA_GATEWAY}/${videoHash}`;
+    }
+    catch (error) {
+        console.error('Error fetching metadata from IPFS:', error);
+        return;
+    }
+};
+
+export const pinFileToIPFS = async (file, fileName, id) => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const pinataMetadata = JSON.stringify({ name: fileName });
+    const pinataMetadata = JSON.stringify({
+        name: fileName,
+        keyvalues: {
+            campaignId: id
+        }
+    });
 
     formData.append('pinataMetadata', pinataMetadata);
 

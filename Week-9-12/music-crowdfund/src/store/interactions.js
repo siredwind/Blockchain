@@ -45,7 +45,8 @@ export const loadProvider = (dispatch) => {
 
 export const loadNetwork = async (provider, dispatch) => {
     const { chainId } = await provider.getNetwork();
-    dispatch(setNetwork(chainId));
+    if (chainId)
+        dispatch(setNetwork(chainId));
 
     return chainId;
 }

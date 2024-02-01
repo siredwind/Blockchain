@@ -42,12 +42,14 @@ const App = () => {
       await loadAccount(dispatch);
     })
 
-    // Initiate contracts
-    await loadToken(provider, chainId, dispatch);
-    const mc = await loadMC(provider, chainId, dispatch);
+    if (chainId) {
+      // Initiate contracts
+      await loadToken(provider, chainId, dispatch);
+      const mc = await loadMC(provider, chainId, dispatch);
 
-    // Load campaigns details
-    await loadCampaigns(mc, dispatch);
+      // Load campaigns details
+      await loadCampaigns(mc, dispatch);
+    }
   }
 
   useEffect(() => {

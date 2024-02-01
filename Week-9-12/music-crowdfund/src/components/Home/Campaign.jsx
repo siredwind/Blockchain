@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import Socials from "./Socials";
 
@@ -8,16 +8,33 @@ import MusicianIcon from "../../assets/musician.svg";
 import CommentIcon from "../../assets/comment.png";
 import EtherIcon from "../../assets/ether.png";
 import FundCampaign from "./FundCampaign";
+import { fetchMetadataFromIPFS } from "../../utils/ipfsUtils";
 
 const Campaign = ({ campaign }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [videoError, setVideoError] = useState(false);
+    const [videoUrl, setVideoUrl] = useState('');
 
     const handleFundClick = () => {
         setIsModalOpen(true);
     };
 
     const fundsRaisedPercentage = (parseInt(campaign.raised) / parseInt(campaign.goal)) * 100;
+
+    useEffect(() => {
+        const fetchMetadata = async () => {
+            try {
+                const videoHash = await fetchMetadataFromIPFS(campaign.url);
+                if (videoHash)
+                    setVideoUrl(videoHash);
+            } catch (error) {
+                console.error('Error fetching metadata:', error);
+                setVideoError(true);
+            }
+        };
+
+        fetchMetadata();
+    }, [campaign.url]);
 
     return (
         <div className="flex flex-row w-full">
@@ -41,7 +58,7 @@ const Campaign = ({ campaign }) => {
                             style={{ filter: 'brightness(0) invert(1)', backgroundColor: 'transparent' }}
                         />
                         : <video
-                            src={`${process.env.REACT_APP_PINATA_GATEWAY}/${process.env.REACT_APP_VIDEO_URI}/${campaign.id}.mp4`}
+                            src={videoUrl}
                             className="w-full rounded-xl"
                             style={{ backgroundColor: 'transparent' }}
                             controls

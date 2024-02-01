@@ -37,7 +37,7 @@ const useCampaignCreate = () => {
                 const { isUpload, ...campaignData } = { ...formData };
 
                 // Step 1: Upload MP4 file
-                const mp4Hash = await pinFileToIPFS(formData.media, `${newCampaignId}.mp4`);
+                const mp4Hash = await pinFileToIPFS(formData.media, `${newCampaignId}.mp4`, newCampaignId);
 
                 // Step 2: Generate Metadata
                 const metadata = generateMetadata(campaignData, mp4Hash);
@@ -45,7 +45,7 @@ const useCampaignCreate = () => {
                 // Step 3: Upload Metadata
                 const blob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
                 const file = new File([blob], "metadata.json");
-                const metadataHash = await pinFileToIPFS(file, `${newCampaignId}.json`);
+                const metadataHash = await pinFileToIPFS(file, `${newCampaignId}.json`, newCampaignId);
 
                 // Step 4: Create Campaign
                 await createCampaign(
