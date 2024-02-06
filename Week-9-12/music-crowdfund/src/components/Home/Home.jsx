@@ -31,7 +31,6 @@ const Home = () => {
               key={campaign.id}
             />)}
         </div>
-      
       </FadeIn>
     </Container>
   );

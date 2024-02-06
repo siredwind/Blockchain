@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ethers } from 'ethers';
 import PropTypes from 'prop-types';
+
+// Components
 import ThankYouMessage from './ThankYouMessage';
 
-// Utils
+// Redux
 import { useDispatch, useSelector } from 'react-redux';
+
+// Store
 import { selectMC, selectProvider, selectToken } from '../../store/selectors';
 import { fundCampaign } from '../../store/interactions';
 
@@ -44,7 +48,7 @@ const inputStyle = {
     backgroundColor: 'black'
 };
 
-const FundCampaign = ({ campaignId, isOpen, onClose }) => {
+const FundCampaignDialog = ({ campaignId, isOpen, onClose }) => {
     const [amount, setAmount] = useState('1');
     const [showThankYou, setShowThankYou] = useState(false);
     const modalRef = useRef();
@@ -108,7 +112,7 @@ const FundCampaign = ({ campaignId, isOpen, onClose }) => {
             <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
                 <form>
                     <label style={{ display: 'block', marginBottom: '5px' }}>
-                        Amount (ETH): <input
+                        Amount (DAPP): <input
                             style={inputStyle}
                             type="number"
                             value={amount}
@@ -128,11 +132,11 @@ const FundCampaign = ({ campaignId, isOpen, onClose }) => {
     ) : null;
 };
 
-FundCampaign.propTypes = {
+FundCampaignDialog.propTypes = {
     campaignId: PropTypes.number.isRequired,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired
 };
 
-export default FundCampaign;
+export default FundCampaignDialog;
 

@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Components
-import Navigation from './components/Navigation';
-import Home from './components/Home';
 import CreateCampaign from './components/Campaign/CreateCampaign';
+import Home from './components/Home';
+import LandingPage from './components/LandingPage';
+import Navigation from './components/Navigation';
 
 // Redux
 import { useDispatch } from 'react-redux';
@@ -20,10 +21,13 @@ import {
   loadMC,
   loadCampaigns,
 } from "./store/interactions";
+import { useAccount } from 'wagmi';
 
 
 const App = () => {
   const dispatch = useDispatch();
+
+  const { isConnected } = useAccount();
 
   const loadBlockchainData = async () => {
     // Initiate provider
@@ -53,17 +57,21 @@ const App = () => {
   }
 
   useEffect(() => {
-    loadBlockchainData();
-  }, []);
+    isConnected && loadBlockchainData();
+  }, [isConnected]);
 
   return (
     <HashRouter>
-      <Navigation />
+      {isConnected && <Navigation />}
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/create-campaign" element={<CreateCampaign />} />
-      </Routes>
+      {isConnected &&
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/create-campaign" element={<CreateCampaign />} />
+        </Routes>
+      }
+
+      {!isConnected && <LandingPage />}
 
     </HashRouter>
   );

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import styled from "styled-components";
 
 // Icons
@@ -8,6 +9,12 @@ import Twitter from "../../assets/twitter.svg";
 import Github from "../../assets/github.svg";
 import Instagram from "../../assets/instagram.svg";
 import Tiktok from "../../assets/tiktok.svg";
+
+// Redux
+import { useSelector } from "react-redux";
+
+// Store
+import { selectSocialLinks } from "../../store/selectors";
 
 const socialData = [
   {
@@ -21,7 +28,7 @@ const socialData = [
     link: "https://www.instagram.com",
   },
   {
-    name: "Tiktok",
+    name: "tiktok",
     icon: Tiktok,
     link: "https://www.tiktok.com",
   },
@@ -53,13 +60,41 @@ const StyledIcon = styled.img`
   }
 `;
 
-const Socials = () => {
+const Socials = ({ campaignId }) => {
+  const [campaignSocialLinks, setCampaignSocialLinks] = useState({});
+  const socialLinks = useSelector(selectSocialLinks);
+
+  const handleDisplayLink = (social) => {
+    const foundPlatform = Object.keys(campaignSocialLinks)
+      .find(platform => platform === social.name && campaignSocialLinks[platform]);
+
+    if (foundPlatform)
+      return campaignSocialLinks[foundPlatform];
+
+    return social.link;
+  }
+
+  useEffect(() => {
+    const currentCampaignsLinks = socialLinks[campaignId - 1];
+    if (currentCampaignsLinks) {
+      const newSocialLinks = {
+        facebook: currentCampaignsLinks[0],
+        instagram: currentCampaignsLinks[1],
+        tiktok: currentCampaignsLinks[2],
+        youtube: currentCampaignsLinks[3],
+        twitter: currentCampaignsLinks[4],
+        github: currentCampaignsLinks[5]
+      }
+      setCampaignSocialLinks(newSocialLinks);
+    }
+  }, [campaignId])
+
   return (
     <div className="grid grid-cols-3 gap-x-2 gap-y-2 my-2">
       {socialData.map((social, index) => (
         <a
-          key={index}
-          href={social.link}
+          key={social.name}
+          href={handleDisplayLink(social)}
           target="_blank"
           rel="noopener noreferrer"
           className="flex justify-center items-center bg-[#131315] text-white text-lg leading-6 text-center px-6 py-4 rounded-[99px] transition duration-300 ease-out"
@@ -73,5 +108,9 @@ const Socials = () => {
     </div>
   );
 }
+
+Socials.propTypes = {
+  campaignId: PropTypes.number
+};
 
 export default Socials;

@@ -35,10 +35,10 @@ root.render(
         chains={chains}
       >
         <Provider store={store}>
-      <App />
-    </Provider>
+          <App />
+        </Provider>
       </RainbowKitProvider>
-      </WagmiConfig>
+    </WagmiConfig>
   </React.StrictMode>
 );
 

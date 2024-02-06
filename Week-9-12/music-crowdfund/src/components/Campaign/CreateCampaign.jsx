@@ -117,7 +117,7 @@ const CreateCampaign = () => {
           </div>
 
           <div>
-            <label className="text-white">Amount (ETH)</label>
+            <label className="text-white">Amount (DAPP)</label>
             <input
               type="number"
               name="goal"

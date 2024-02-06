@@ -54,7 +54,31 @@ export const mc = createSlice({
         createSuccess: (state, action) => {
             state.creating.isLoading = false;
             state.creating.isSuccess = true;
-            state.creating.transactionHash = action.payload;
+            state.creating.transactionHash = action.payload.transactionHash;
+
+            const campaignId = parseInt(state.campaignCount) + 1;
+            const campaign = action.payload.campaign;
+            const goal = ethers.utils.parseUnits(campaign.goal.toString(), 'wei');
+            const raised = ethers.utils.parseUnits('0', 'wei');
+
+            // Add one more campaign to active campaigns
+            state.activeCampaignCount = parseInt(state.activeCampaignCount) + 1;
+
+            // Add one more campaign to campaigns
+            state.campaignCount = campaignId;
+
+            // Add campaign to campaigns
+            state.campaigns[campaignId] = [
+                campaignId,
+                campaign.musician,
+                campaign.title,
+                campaign.description,
+                campaign.url,
+                goal,
+                raised,
+                campaign.deadline,
+                false,
+            ]
         },
         createFail: (state) => {
             state.creating.isLoading = false;
@@ -116,7 +140,15 @@ export const mc = createSlice({
         closeSuccess: (state, action) => {
             state.closing.isLoading = false;
             state.closing.isSuccess = true;
-            state.closing.transactionHash = action.payload;
+            state.closing.transactionHash = action.payload.transactionHash;
+
+            // remove one campaign from active campaigns
+            state.activeCampaignCount = parseInt(state.activeCampaignCount) - 1;
+
+            // remove campaign from campaigns
+            state.campaigns = state.campaigns.filter(campaign => 
+                parseInt(campaign[0]) !== parseInt(action.payload.campaignId)
+            );
         },
         closeFail: (state) => {
             state.closing.isLoading = false;

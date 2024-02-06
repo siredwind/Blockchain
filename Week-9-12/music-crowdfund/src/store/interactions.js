@@ -118,6 +118,7 @@ export const createCampaign = async (provider, mc, title, description, url, goal
         dispatch(createRequest());
 
         const signer = await provider.getSigner();
+        const signerAddress = await signer.getAddress();
 
         let transaction;
         transaction = await mc.connect(signer).createCampaign(
@@ -129,7 +130,17 @@ export const createCampaign = async (provider, mc, title, description, url, goal
         );
         await transaction.wait();
 
-        dispatch(createSuccess(transaction.hash));
+        dispatch(createSuccess({
+            transactionHash: transaction.hash,
+            campaign: {
+                musician: signerAddress,
+                title: title,
+                description: description,
+                url: url,
+                goal: goal,
+                deadline: deadline
+            }
+        }));
     } catch (error) {
         dispatch(createFail(error.message));
     }
@@ -150,10 +161,10 @@ export const fundCampaign = async (provider, mc, token, campaignId, amount, disp
         transaction = await mc.connect(signer).fundCampaign(campaignId, amount);
         await transaction.wait();
 
-        dispatch(fundSuccess({ 
-            transactionHash: transaction.hash, 
-            campaignId: campaignId, 
-            amount: amount 
+        dispatch(fundSuccess({
+            transactionHash: transaction.hash,
+            campaignId: campaignId,
+            amount: amount
         }));
     } catch (error) {
         dispatch(fundFail(error.message));
@@ -172,7 +183,10 @@ export const closeCampaign = async (provider, mc, campaignId, dispatch) => {
         transaction = await mc.connect(signer).closeCampaign(campaignId);
         await transaction.wait();
 
-        dispatch(closeSuccess(transaction.hash));
+        dispatch(closeSuccess({
+            transactionHash: transaction.hash,
+            campaignId: campaignId
+        }));
     } catch (error) {
         dispatch(closeFail(error.message));
     }
