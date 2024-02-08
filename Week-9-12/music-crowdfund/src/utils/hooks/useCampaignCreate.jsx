@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { ethers } from 'ethers';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,11 +8,8 @@ import { createCampaign, updateSocialLinks } from '../../store/interactions';
 import { selectCampaignCount, selectMC, selectProvider } from '../../store/selectors';
 
 // Utils
-import { pinFileToIPFS, generateMetadata } from '../ipfsUtils';
-
-const tokens = (n) => {
-    return ethers.utils.parseUnits(n.toString(), 'ether');
-}
+import { pinFileToIPFS, generateMetadata } from '../helpers/ipfsUtils';
+import { tokens } from '../helpers';
 
 const useCampaignCreate = () => {
     const dispatch = useDispatch();

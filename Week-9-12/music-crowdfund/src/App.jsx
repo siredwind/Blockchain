@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 // Components
-import CreateCampaign from './components/Campaign/CreateCampaign';
+import CreateCampaign from './components/CreateCampaign';
 import Home from './components/Home';
 import LandingPage from './components/LandingPage';
 import Navigation from './components/Navigation';

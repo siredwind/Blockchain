@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchMetadataFromIPFS } from "../ipfsUtils";
+import { fetchMetadataFromIPFS } from "../helpers/ipfsUtils";
 
 const useFetchVideoUrl = (campaign) => {
     const [videoUrl, setVideoUrl] = useState(null);

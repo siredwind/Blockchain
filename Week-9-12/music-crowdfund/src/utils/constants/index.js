@@ -1,4 +1,6 @@
 
+export const IPFS_TAG = "ipfs://";
+
 export const MusicCrowdfundingFunctions = {
     ACTIVE_CAMPAIGN_COUNT: 'activeCampaignCount',
     CAMPAIGN_COUNT: 'campaignCount',
@@ -6,7 +8,7 @@ export const MusicCrowdfundingFunctions = {
     CREATE_CAMPAIGN: 'createCampaign',
     FUND_CAMPAIGN: 'fundCampaign',
     CLOSE_CAMPAIGN: 'closeCampaign'
-}
+};
 
 export const InitCampaignData = {
     title: "",
@@ -15,7 +17,7 @@ export const InitCampaignData = {
     goal: "1",
     deadline: "30",
     isUpload: true,
-}
+};
 
 export const InitSocialLinks = {
     facebook: "",
@@ -24,7 +26,7 @@ export const InitSocialLinks = {
     youtube: "",
     twitter: "",
     github: ""
-}
+};
 
 export const MetadataTemplate = {
     id: "7ccc7c11688b48ea9f437abdfaf4f30dc",
@@ -51,4 +53,13 @@ export const MetadataTemplate = {
             "value": "Bed"
         }
     ]
-}
+};
+
+export const socialMediaArray = [
+    "facebook", 
+    "instagram", 
+    "tiktok", 
+    "youtube", 
+    "twitter", 
+    "github"
+];
