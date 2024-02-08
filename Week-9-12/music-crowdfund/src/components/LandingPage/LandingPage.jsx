@@ -2,10 +2,10 @@ import React, { useMemo } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 // Components
-import { FadeIn } from "./FadeIn";
+import FadeIn from "../common/Effects/FadeIn/FadeIn";
 
 // Images
-import MusicLogo from "../assets/music.png";
+import MusicLogo from "../../assets/music.png";
 
 import styled, { keyframes } from "styled-components";
 

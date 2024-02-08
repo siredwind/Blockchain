@@ -47,7 +47,7 @@ const CampaignDetails = ({ campaign, handleClick = () => { } }) => {
     return (
         <div className="flex flex-col w-3/4 bg-[#131315] px-12 py-10 rounded-3xl my-2">
             {
-                videoError
+                videoError || videoIsLoading
                     ? <img
                         src={MusicCampaignIcon}
                         alt="Fallback"

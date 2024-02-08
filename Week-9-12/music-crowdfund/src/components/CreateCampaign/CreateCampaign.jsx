@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 // Components
-import { FadeIn } from "../FadeIn";
+import FadeIn from "../common/Effects/FadeIn/FadeIn";
 import SocialLinksFields from "./SocialLinksFields";
 import ToggleButton from "../common/Button/ToggleButton";
 import SubmitButton from "../common/Button/SubmitButton";

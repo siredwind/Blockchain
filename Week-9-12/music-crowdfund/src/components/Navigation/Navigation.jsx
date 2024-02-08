@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // Components
-import { FadeIn } from '../FadeIn';
+import FadeIn from '../common/Effects/FadeIn/FadeIn';
 import RainbowMusicLogo from '../RainbowMusicLogo';
 
 // Redux

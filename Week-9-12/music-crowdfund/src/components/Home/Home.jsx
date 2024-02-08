@@ -4,7 +4,7 @@ import React from "react";
 import Container from "../Container";
 import Campaign from "../Campaign";
 import News from "../News";
-import { FadeIn } from "../FadeIn";
+import FadeIn from "../common/Effects/FadeIn/FadeIn";
 
 // Redux 
 import { useSelector } from "react-redux";
