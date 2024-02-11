@@ -32,7 +32,9 @@ export const campaignSelector = createSelector(selectCampaigns, (campaigns) => {
 
         if (campaignDetails) acc.push(campaignDetails);
         return acc;
-    }, [])
+    }, []);
 
-    return allCampaigns
+    const sortedCampaigns = [...allCampaigns].sort((a, b) => b.id - a.id);
+
+    return sortedCampaigns;
 })
