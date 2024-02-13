@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PropTypes from 'prop-types';
 import styled from "styled-components";
 
@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 
 // Store
 import { selectSocialLinks } from "../../store/selectors";
+import useCampaignSocialLinks from "../../utils/hooks/useCampaignSocialLinks";
 
 const socialData = [
   {
@@ -61,33 +62,21 @@ const StyledIcon = styled.img`
 `;
 
 const Socials = ({ campaignId }) => {
-  const [campaignSocialLinks, setCampaignSocialLinks] = useState({});
   const socialLinks = useSelector(selectSocialLinks);
+  const campaignSocialLinks = useCampaignSocialLinks({
+    data: socialData,
+    links: socialLinks,
+    id: campaignId
+  });
 
   const handleDisplayLink = (social) => {
     const foundPlatform = Object.keys(campaignSocialLinks)
       .find(platform => platform === social.name && campaignSocialLinks[platform]);
-
     if (foundPlatform)
       return campaignSocialLinks[foundPlatform];
 
     return social.link;
   }
-
-  useEffect(() => {
-    const currentCampaignsLinks = socialLinks[campaignId - 1];
-    if (currentCampaignsLinks) {
-      const newSocialLinks = {
-        facebook: currentCampaignsLinks[0],
-        instagram: currentCampaignsLinks[1],
-        tiktok: currentCampaignsLinks[2],
-        youtube: currentCampaignsLinks[3],
-        twitter: currentCampaignsLinks[4],
-        github: currentCampaignsLinks[5]
-      }
-      setCampaignSocialLinks(newSocialLinks);
-    }
-  }, [campaignId])
 
   return (
     <div className="grid grid-cols-3 gap-x-2 gap-y-2 my-2">
